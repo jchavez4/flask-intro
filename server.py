@@ -13,17 +13,33 @@ AWESOMENESS = [
     'oh-so-not-meh', 'brilliant', 'ducky', 'coolio', 'incredible',
     'wonderful', 'smashing', 'lovely']
 
+INSULTS = ['stupid', 'muggle','smelly', 'gross', 'newb', 'lame-o', 'reptar']
+
 
 @app.route('/')
 def start_here():
     """Home page."""
 
-    return "<!doctype html><html>Hi! This is the home page.</html>"
+    return """
+    <!doctype html>
+    <html>
+      Hi! This is the home page.
+      <a href="/hello">Get a compliment!</a>
+    </html>
+    """
 
 
 @app.route('/hello')
 def say_hello():
     """Say hello and prompt for user's name."""
+
+    compliment = ""
+    for item in AWESOMENESS:
+      compliment += '<option value = "{}">{}</option>\n'.format(item, item)
+
+    insult = ""
+    for item in INSULTS:
+      insult += '<option value = "{}">{}</option>\n'.format(item, item)
 
     return """
     <!doctype html>
@@ -35,11 +51,15 @@ def say_hello():
         <h1>Hi There!</h1>
         <form action="/greet">
           What's your name? <input type="text" name="person">
+          <br>
+          Select a compliment:
+          <select name = "greeting">
+            {}
           <input type="submit" value="Submit">
-        </form>
+        </form>          
       </body>
     </html>
-    """
+    """.format(compliment)
 
 
 @app.route('/greet')
@@ -48,7 +68,7 @@ def greet_person():
 
     player = request.args.get("person")
 
-    compliment = choice(AWESOMENESS)
+    compliment = request.args.get("greeting")
 
     return """
     <!doctype html>
@@ -61,6 +81,12 @@ def greet_person():
       </body>
     </html>
     """.format(player=player, compliment=compliment)
+
+@app.route('/insult')
+def insult_person():
+    player = request.args.get("person")
+
+
 
 
 if __name__ == '__main__':
